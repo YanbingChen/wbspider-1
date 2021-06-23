@@ -1,9 +1,6 @@
 package com.db;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class MysqlConnector {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
@@ -52,5 +49,11 @@ public class MysqlConnector {
             e.printStackTrace();
         }
 
+    }
+
+    public synchronized static DatabaseMetaData getMetaData() throws Exception {
+        if(conn == null) init();
+        //获取数据库的元数据
+        return conn.getMetaData();
     }
 }
