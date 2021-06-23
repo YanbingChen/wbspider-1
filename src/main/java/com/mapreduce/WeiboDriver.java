@@ -1,6 +1,7 @@
 package com.mapreduce;
 
 
+import com.db.MysqlConnector;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -9,11 +10,18 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 
+import java.io.File;
 import java.io.IOException;
 
 public class WeiboDriver {
 
     public static void main(String[] args) throws IOException, ClassNotFoundException, InterruptedException {
+
+        // 0 Delete Output File
+        File f = new File(args[1]);
+        if(f.isDirectory()) {
+            f.delete();
+        }
 
         // 1 获取job
         Configuration conf = new Configuration();

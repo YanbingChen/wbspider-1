@@ -1,11 +1,20 @@
 package com.mapreduce;
 
+import com.PostsSpider;
+import com.SeleniumSpider;
+import com.db.SQLdb;
+import com.db.WeiboDB;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 
 /**
@@ -20,33 +29,42 @@ public class WeiboMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
 
     @Override
     protected void map(LongWritable key, Text value, Context context) throws IOException, InterruptedException {
-/*
-        // 1 获取一行
-        String line = value.toString();
 
-        // 2 匹配 Starting Delivery
-        String[] startDel = line.split(" starting delivery ");
-        if (startDel.length > 1) {
-            // Situation Starting delivery
-            // 2.1 提取ID
-            String[] idSplit = startDel[1].split(": ");
-            outK.set(Integer.parseInt(idSplit[0]));
-            String[] mailSplit = idSplit[1].split(" ");
-            outV.set(mailSplit[(mailSplit.length-1)]);
-            context.write(outK, outV);
-            return;
+        // 1 Get Url
+        String jsonUrl = value.toString();
+
+        // 2 Deliver Url to Spider, get result.
+        PostsSpider ps = new PostsSpider(jsonUrl, 1);
+        List<Pair<String, String>> result = null;
+        try {
+            result = ps.run();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
-        // 3 匹配 Delivery
-        String[] deliveryStat = line.split(" delivery ");
-        if (deliveryStat.length > 1) {
-            // Situation Delivery: Success/Failure/Deferral.
-            // 3.1 提取ID
-            String[] idSplit = deliveryStat[1].split(": ");
-            outK.set(Integer.parseInt(idSplit[0]));
-            outV.set(idSplit[1]);
-            context.write(outK, outV);
+        // 3 Stroe results to DB
+        WeiboDB db = new SQLdb();       // Choose SQLdb
+        if(result != null) {
+            // Store to DB
+            for(Pair<String, String> pair : result) {
+                db.storeText(pair.getKey(), pair.getValue());
+
+                // Meanwhile, get uid info.
+                try {
+                    new SeleniumSpider(pair.getKey()).run();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ClassNotFoundException e) {
+                    e.printStackTrace();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
-*/
+
     }
 }

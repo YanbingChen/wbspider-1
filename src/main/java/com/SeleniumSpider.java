@@ -15,29 +15,34 @@ public class SeleniumSpider {
     public String UID = "6284091238";
     public String FINAL_TARGET_URL = TARGET_URL + UID;
 
+    public SeleniumSpider(String uid) {
+        UID = uid;
+        FINAL_TARGET_URL = TARGET_URL + UID;
+    }
+
     public void run() throws InterruptedException, ClassNotFoundException, SQLException {
-        System.setProperty("webdriver.chrome.driver", "F:/21Hadoop/wbspider-1/chromedriver.exe");
+        System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
         WebDriver driver = new ChromeDriver();
         driver.get(FINAL_TARGET_URL);
 
-        Thread.sleep(3000);
+        Thread.sleep(1500);
 
         // WebElement webElement = driver.findElement(By.cssSelector(".item-list"));
         // 关注数
         WebElement webElement_follow = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(1) > span"));
-        double follows = Double.parseDouble(webElement_follow.getText());
+        String follows = webElement_follow.getText();
         System.out.println(webElement_follow.getText());
 
         // 粉丝数
         WebElement webElement_fan = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(2) > span"));
-        double fans = Double.parseDouble(webElement_fan.getText());
+        String fans = webElement_fan.getText();
         System.out.println(webElement_fan.getText());
 
         // 写入数据库
-        double uid = Double.parseDouble(UID);
+        String uid = UID;
         Class.forName("com.mysql.cj.jdbc.Driver");
-        Connection connection = DriverManager.getConnection("jdbc:mysql:///wbspider","root","admin");
-        CallableStatement pst = connection.prepareCall("insert into user_info (uid, follows, fans) values (" + uid + "," + follows + ", " + fans +")");
+        Connection connection = DriverManager.getConnection("jdbc:mysql:///wbspider","wbSpider","spider");
+        CallableStatement pst = connection.prepareCall("insert into user_info (uid, follows, fans) values ('" + uid + "','" + follows + "', '" + fans +"')");
         pst.execute();
         connection.close();
         pst.close();
@@ -49,7 +54,7 @@ public class SeleniumSpider {
 
     public static void main(String[] args) {
         try {
-            new SeleniumSpider().run();
+            new SeleniumSpider("6284091238").run();
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (SQLException throwables) {
