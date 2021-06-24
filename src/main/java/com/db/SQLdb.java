@@ -1,11 +1,8 @@
 package com.db;
 
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+
 
 public class SQLdb implements WeiboDB{
 
@@ -56,27 +53,6 @@ public class SQLdb implements WeiboDB{
         MysqlConnector.execute(req);
 
         return true;
-    }
-
-
-    public ResultSet getTable() {
-        return MysqlConnector.request("SELECT * FROM " + tableName);
-    }
-
-    public static ResultSet getTables() {
-        DatabaseMetaData dbMetaData = null;
-        try {
-            //获取数据库的元数据
-            dbMetaData = MysqlConnector.getMetaData();
-            if(dbMetaData != null) {
-                //从元数据中获取到所有的表名
-                return dbMetaData.getTables(null, null, null,new String[] { "TABLE" });
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
 }

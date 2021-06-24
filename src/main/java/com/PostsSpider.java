@@ -34,11 +34,14 @@ public class PostsSpider {
         // 0 Initialize Params
         List<Pair<String, String>> result = new ArrayList<>();
 
-        // 1. 生成httpclient，相当于打开一个浏览器
-        CloseableHttpClient httpClient = HttpClients.createDefault();
+        CloseableHttpClient httpClient = null;
         CloseableHttpResponse response = null;
+
         for (int i = 0; i < pages; i++) { // 循环爬取前50页
             try {
+                // 1. 生成httpclient，相当于打开一个浏览器
+                httpClient = HttpClients.createDefault();
+
                 // 2. 创建get请求
                 HttpGet request = new HttpGet(jsonUrl + "&page=" + i);
                 // 3. 执行get请求
@@ -74,21 +77,18 @@ public class PostsSpider {
                     System.out.println("返回状态不是200");
                     System.out.println(EntityUtils.toString(response.getEntity(), "utf-8"));
                 }
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-                HttpClientUtils.closeQuietly(httpClient);
-            } catch (IOException e) {
-                e.printStackTrace();
-                HttpClientUtils.closeQuietly(httpClient);
-            } finally {
                 // 6. 关闭
                 HttpClientUtils.closeQuietly(response);
+                HttpClientUtils.closeQuietly(httpClient);
+            } catch (ClientProtocolException e) {
+                e.printStackTrace();
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            Thread.sleep(1000);
+            Thread.sleep(2000);
         }
 
-        // Close Client
-        HttpClientUtils.closeQuietly(httpClient);
 
         // Return result
         return result;

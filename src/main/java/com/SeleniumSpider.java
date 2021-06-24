@@ -23,27 +23,30 @@ public class SeleniumSpider {
         FINAL_TARGET_URL = TARGET_URL + UID;
     }
 
-    public List<String> run() throws InterruptedException, ClassNotFoundException, SQLException {
+    public List<String> run() {
         List<String> result = new ArrayList<String>();
+        String follows = "-1";
+        String fans = "-1";
 
         System.setProperty("webdriver.chrome.driver", "/usr/local/share/chromedriver");
         WebDriver driver = new ChromeDriver();
         driver.get(FINAL_TARGET_URL);
 
-        Thread.sleep(1500);
+        try {
+            Thread.sleep(2000);
 
-        // WebElement webElement = driver.findElement(By.cssSelector(".item-list"));
-        // 关注数
-        WebElement webElement_follow = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(1) > span"));
-        String follows = webElement_follow.getText();
-        System.out.println(webElement_follow.getText());
+            // WebElement webElement = driver.findElement(By.cssSelector(".item-list"));
+            // 关注数
+            WebElement webElement_follow = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(1) > span"));
+            follows = webElement_follow.getText();
+            System.out.println(webElement_follow.getText());
 
-        // 粉丝数
-        WebElement webElement_fan = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(2) > span"));
-        String fans = webElement_fan.getText();
-        System.out.println(webElement_fan.getText());
+            // 粉丝数
+            WebElement webElement_fan = driver.findElement(By.cssSelector("#app > div:nth-child(1) > div:nth-child(1) > div:nth-child(1) > div > div.item-list > div.mod-fil-fans > div:nth-child(2) > span"));
+            fans = webElement_fan.getText();
+            System.out.println(webElement_fan.getText());
 
-        // 写入数据库
+            // 写入数据库
 //        String uid = UID;
 //        Class.forName("com.mysql.cj.jdbc.Driver");
 //        Connection connection = DriverManager.getConnection("jdbc:mysql:///wbspider","wbSpider","spider");
@@ -52,9 +55,14 @@ public class SeleniumSpider {
 //        connection.close();
 //        pst.close();
 
-        Thread.sleep(1000);
-        driver.close();
-        driver.quit();
+            Thread.sleep(1000);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            driver.close();
+            driver.quit();
+        }
 
         result.add(UID);
         result.add(follows);
@@ -64,14 +72,6 @@ public class SeleniumSpider {
     }
 
     public static void main(String[] args) {
-        try {
-            new SeleniumSpider("6284091238").run();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        new SeleniumSpider("2010021631").run();
     }
 }

@@ -4,9 +4,9 @@ import java.sql.*;
 
 public class MysqlConnector {
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://192.168.0.51:3306/wbspider?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
+    static final String DB_URL = "jdbc:mysql://192.168.10.100:3306/wbspider?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";
 
-    static final String USER = "wbSpider";
+    static final String USER = "wbSpider";  // INSERT CREATE SELECT quanxian
     static final String PASS = "spider";
 
     private static Connection conn;

@@ -25,21 +25,14 @@ public class UserInfoMapper extends Mapper<LongWritable, Mblog, IntWritable, Tex
     protected void map(LongWritable var, Mblog mblog, Context context) throws IOException, InterruptedException {
 
         // 1 Create Table in DB
-        String tbName = mblog.getEvent() + "_user";
-        WeiboDB db = new SQLdb(tbName);       // Choose SQLdb
+        String tableName = mblog.getEvent() + "_user";
+        WeiboDB db = new SQLdb(tableName);       // Choose SQLdb
 
         // 2 Deliver Uid to Spider, get result
         SeleniumSpider sels = new SeleniumSpider(mblog.getUid());
         List<String> result = null;
-        try {
-            result = sels.run();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+
+        result = sels.run();
 
         // 3 Stroe results to DB
         if(result != null) {
