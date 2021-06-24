@@ -11,6 +11,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ *  CLASS: Mblog
+ *  自定义数据类型，实现了Writable 和 DBWritable，将数据传递给Mapper.
+ */
+
 public class Mblog implements Writable, DBWritable {
     // id
     private Integer id;

@@ -14,21 +14,20 @@ import java.util.List;
 
 
 /**
- * KEYIN, map阶段输入的key的类型：LongWritable
- * VALUEIN,map阶段输入value类型：Text
- * KEYOUT,map阶段输出的Key类型：Text
- * VALUEOUT,map阶段输出的value类型：IntWritable
+ *  CLASS: HotTopicExtractor
+ *  METHODS:
+ *      - static void process(String, String): 通过URL提取热搜，并存入数据库
  */
 public class HotTopicExtractor {
 
     public static void process(String event, String url) {
 
-        // 1 Create Table in DB
+        // 1 在DB内创建Table
         String tableName = event + "_mblog";
         WeiboDB db = new SQLdb(tableName);       // Choose SQLdb
         db.setTable(tableName, SQLdb.MBLOG_ROWS);
 
-        // 2 Deliver Url to Spider, get result.
+        // 2 将参数传入PostSpider并获得结果
         PostsSpider ps = new PostsSpider(url, 20);
         List<Pair<String, String>> result = null;
         try {
@@ -37,7 +36,7 @@ public class HotTopicExtractor {
             e.printStackTrace();
         }
 
-        // 3 Stroe results to DB
+        // 3 将结果存入DB对应的表中
         if(result != null) {
             // Store to DB
             for(Pair<String, String> pair : result) {
@@ -46,7 +45,7 @@ public class HotTopicExtractor {
         }
     }
 
-    // Clean data here.
+    // 针对Text数据的清洗与转译
     private static String modifyText(String text) {
         if (text == null) return null;
         return text.replaceAll("'", "''");
